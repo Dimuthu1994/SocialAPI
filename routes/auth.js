@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const _ = require("lodash");
-const Joi = require("joi");
+const Joi = require("@hapi/joi");
 
 //Login
 router.post("/login", async (req, res) => {

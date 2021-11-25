@@ -5,6 +5,8 @@ const users = require("./routes/users");
 const auth = require("./routes/auth");
 const posts = require("./routes/posts");
 const mongoose = require("mongoose");
+const Joi = require("@hapi/joi");
+Joi.objectId = require("joi-objectid")(Joi);
 
 app.use(helmet());
 app.use(express.json());

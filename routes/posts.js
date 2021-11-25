@@ -7,9 +7,9 @@ router.post("/", async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  let post = new Post(req.body);
-  post = await post.save();
-  res.send(post);
+  const post = new Post(req.body);
+  await post.save();
+  res.send("saved to database");
 });
 //update a post
 //delete a post
