@@ -19,4 +19,6 @@ router.post("/register", async (req, res) => {
   res.send("saved to database");
 });
 
+//update User
+
 module.exports = router;
