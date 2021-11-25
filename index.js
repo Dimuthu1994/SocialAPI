@@ -3,12 +3,14 @@ const app = express();
 const helmet = require("helmet");
 const users = require("./routes/users");
 const auth = require("./routes/auth");
+const posts = require("./routes/posts");
 const mongoose = require("mongoose");
 
 app.use(helmet());
 app.use(express.json());
 app.use("/api/users", users);
 app.use("/api/auth", auth);
+app.use("/api/posts", posts);
 
 async function main() {
   try {

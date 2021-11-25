@@ -1,4 +1,5 @@
-const Joi = require("joi");
+const Joi = require("@hapi/joi");
+Joi.objectId = require("joi-objectid")(Joi);
 const mongoose = require("mongoose");
 
 const postSchema = new mongoose.Schema(
@@ -10,6 +11,7 @@ const postSchema = new mongoose.Schema(
     desc: {
       type: String,
       max: 500,
+      default: "",
     },
     img: {
       type: String,
@@ -23,4 +25,15 @@ const postSchema = new mongoose.Schema(
 );
 
 const Post = mongoose.model("Post", postSchema);
+
+function validatePost(post) {
+  const schema = Joi.object({
+    userId: Joi.objectId().required(),
+    desc: Joi.string().max(500),
+    img: Joi.string(),
+    likes: Joi.array(),
+  });
+  return schema.validate(post);
+}
 module.exports.Post = Post;
+module.exports.validate = validatePost;
