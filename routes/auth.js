@@ -1,21 +1,30 @@
-const { User, validate } = require("../models/user");
+const { User } = require("../models/user");
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const _ = require("lodash");
+const Joi = require("joi");
 
-// Register
-router.post("/register", async (req, res) => {
+//Login
+router.post("/login", async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   let user = await User.findOne({ email: req.body.email });
-  if (user) return res.status(400).send("User already registered");
+  if (!user) return res.status(400).send("Invalid email or password");
 
-  user = new User(_.pick(req.body, ["username", "email", "password"]));
-  const salt = await bcrypt.genSalt(8);
-  user.password = await bcrypt.hash(user.password, salt);
-  await user.save();
-  res.send("ok");
+  const validPassword = await bcrypt.compare(req.body.password, user.password);
+  if (!validPassword) return res.status(400).send("Invalid email or password");
+
+  res.send(true);
 });
+
+function validate(req) {
+  const schema = Joi.object({
+    email: Joi.string().max(50).required().email(),
+    password: Joi.string().min(6).max(255).required(),
+  });
+  return schema.validate(req);
+}
+
 module.exports = router;
