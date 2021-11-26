@@ -27,6 +27,17 @@ router.put("/:id", async (req, res) => {
   }
 });
 //delete a post
+router.delete("/:id", async (req, res) => {
+  const post = await Post.findById(req.params.id);
+  if (!post) return res.status(404).send("The post with given id not found");
+
+  if (post.userId === req.body.userId) {
+    await post.deleteOne();
+    res.send("the post has deleted");
+  } else {
+    res.status(403).send("you can delete only your post");
+  }
+});
 //like a post
 // get a post
 // get timeline posts
