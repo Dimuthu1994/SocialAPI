@@ -3,6 +3,8 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const _ = require("lodash");
+const jwt = require("jsonwebtoken");
+const config = require("config");
 
 // Register
 router.post("/register", async (req, res) => {
@@ -16,7 +18,11 @@ router.post("/register", async (req, res) => {
   const salt = await bcrypt.genSalt(8);
   user.password = await bcrypt.hash(user.password, salt);
   await user.save();
-  res.send("saved to database");
+
+  const token = jwt.sign({ _id: user._id }, config.get("jwtPrivateKey"));
+  res
+    .header("x-auth-token", token)
+    .send(_.pick(user, ["_id", "username", "email"]));
 });
 
 //update User
