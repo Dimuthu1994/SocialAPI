@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const _ = require("lodash");
+const auth = require("../middleware/auth");
 
 // Register
 router.post("/register", async (req, res) => {
@@ -24,5 +25,26 @@ router.post("/register", async (req, res) => {
 });
 
 //update User
+router.patch("/me", auth, async (req, res) => {
+  //need to set to 6 characters from frontend
+  if (req.body.password) {
+    const salt = await bcrypt.genSalt(8);
+    req.body.password = await bcrypt.hash(req.body.password, salt);
+  }
+  let user = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: req.body,
+    },
+    { new: true, runValidators: true }
+  );
+  if (!user) return res.status(404).send("user not found");
+  res.send("user updated");
+});
+
+//delete user
+//get a user
+//follow a user
+//unfollow a user
 
 module.exports = router;

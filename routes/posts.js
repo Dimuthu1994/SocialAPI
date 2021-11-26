@@ -1,10 +1,11 @@
 const { Post, validate } = require("../models/post");
 const { User } = require("../models/user");
+const auth = require("../middleware/auth");
 const express = require("express");
 const router = express.Router();
 
 //create a post
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -13,7 +14,7 @@ router.post("/", async (req, res) => {
   res.send("saved to database");
 });
 //update a post
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -28,7 +29,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 //delete a post
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
   const post = await Post.findById(req.params.id);
@@ -42,7 +43,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 //like a post
-router.put("/:id/like", async (req, res) => {
+router.put("/:id/like", auth, async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
   const post = await Post.findById(req.params.id);
@@ -57,14 +58,14 @@ router.put("/:id/like", async (req, res) => {
   }
 });
 // get a post
-router.get("/:id", async (req, res) => {
+router.get("/:id", auth, async (req, res) => {
   const post = await Post.findById(req.params.id);
   if (!post)
     return res.status(404).send("The post with the given ID is not found");
   res.send(post);
 });
 // get timeline posts
-router.get("/timeline/all", async (req, res) => {
+router.get("/timeline/all", auth, async (req, res) => {
   const currentUser = await User.findById(req.body.userId);
   //if (!post) return res.status(404).send("The post with given id not found");
   const userPosts = await Post.find({ userId: currentUser._id });
