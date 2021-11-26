@@ -1,4 +1,5 @@
 const { Post, validate } = require("../models/post");
+const { User } = require("../models/user");
 const express = require("express");
 const router = express.Router();
 
@@ -56,6 +57,21 @@ router.put("/:id/like", async (req, res) => {
   }
 });
 // get a post
+router.get("/:id", async (req, res) => {
+  const post = await Post.findById(req.params.id);
+  if (!post)
+    return res.status(404).send("The post with the given ID is not found");
+  res.send(post);
+});
 // get timeline posts
-
+router.get("/timeline/all", async (req, res) => {
+  const currentUser = await User.findById(req.body.userId);
+  const userPosts = await Post.find({ userId: currentUser._id });
+  const friendPosts = await Promise.all(
+    currentUser.followings.map((friendId) => {
+      return Post.find({ userId: friendId });
+    })
+  );
+  res.send(userPosts.concat(...friendPosts));
+});
 module.exports = router;
