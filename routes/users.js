@@ -53,7 +53,14 @@ router.delete("/me", auth, async (req, res) => {
   await User.findByIdAndDelete(req.user._id);
   res.send("Account has been deleted");
 });
-//get a user
+//get another user account
+router.get("/:id", auth, async (req, res) => {
+  const user = await User.findById(req.params.id);
+  if (!user)
+    return res.status(404).send("The user with the given ID is not found");
+  res.send(user);
+});
+
 //follow a user
 //unfollow a user
 
