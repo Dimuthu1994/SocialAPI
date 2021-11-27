@@ -62,7 +62,39 @@ router.get("/:id", auth, async (req, res) => {
   res.send(other);
 });
 
-//follow a user
+//me follow a user(another friend)
+router.patch("/:id/follow", auth, async (req, res) => {
+  if (req.user._id !== req.params.id) {
+    const friend = await User.findById(req.params.id);
+    const mySelf = await User.findById(req.user._id);
+
+    if (!friend.followers.includes(req.user._id)) {
+      await friend.updateOne({ $push: { followers: req.user._id } });
+      await mySelf.updateOne({ $push: { followings: req.params.id } });
+      res.send("user has been followed");
+    } else {
+      res.status(403).send("you already follow this user");
+    }
+  } else {
+    res.status(403).send("you cant follow yourself");
+  }
+});
 //unfollow a user
+router.patch("/:id/unfollow", auth, async (req, res) => {
+  if (req.user._id !== req.params.id) {
+    const friend = await User.findById(req.params.id);
+    const mySelf = await User.findById(req.user._id);
+
+    if (friend.followers.includes(req.user._id)) {
+      await friend.updateOne({ $pull: { followers: req.user._id } });
+      await mySelf.updateOne({ $pull: { followings: req.params.id } });
+      res.send("user has been unfollowed");
+    } else {
+      res.status(403).send("you dont follow this user");
+    }
+  } else {
+    res.status(403).send("you cant unfollow yourself");
+  }
+});
 
 module.exports = router;
