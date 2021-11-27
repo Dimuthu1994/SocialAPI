@@ -43,6 +43,16 @@ router.patch("/me", auth, async (req, res) => {
 });
 
 //delete user
+router.delete("/me", auth, async (req, res) => {
+  let user = await User.findOne({ email: req.body.email });
+  if (!user) return res.status(400).send("Invalid email or password");
+
+  const validPassword = await bcrypt.compare(req.body.password, user.password);
+  if (!validPassword) return res.status(400).send("Invalid email or password");
+
+  await User.findByIdAndDelete(req.user._id);
+  res.send("Account has been deleted");
+});
 //get a user
 //follow a user
 //unfollow a user

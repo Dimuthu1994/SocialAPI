@@ -8,20 +8,20 @@ const userSchema = new mongoose.Schema(
     username: {
       type: String,
       required: true,
-      max: 20,
-      min: 3,
+      maxlength: 20,
+      minlength: 3,
       unique: true,
     },
     email: {
       type: String,
-      max: 50,
+      maxlength: 50,
       required: true,
       unique: true,
     },
     password: {
       type: String,
       required: true,
-      min: 6,
+      minlength: 6,
     },
     profilePicture: {
       type: String,
@@ -45,19 +45,22 @@ const userSchema = new mongoose.Schema(
     },
     desc: {
       type: String,
-      max: 50,
+      maxlength: 50,
     },
     city: {
       type: String,
-      max: 50,
+      maxlength: 50,
     },
     from: {
       type: String,
-      max: 50,
+      maxlength: 50,
     },
     relationship: {
       type: Number,
-      enum: [1, 2, 3],
+      enum: {
+        values: [1, 2, 3],
+        message: "{VALUE} is not supported",
+      },
     },
   },
   { timestamps: true }
