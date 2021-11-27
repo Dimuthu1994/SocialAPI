@@ -56,9 +56,10 @@ router.delete("/me", auth, async (req, res) => {
 //get another user account
 router.get("/:id", auth, async (req, res) => {
   const user = await User.findById(req.params.id);
+  const { password, updatedAt, ...other } = user._doc;
   if (!user)
     return res.status(404).send("The user with the given ID is not found");
-  res.send(user);
+  res.send(other);
 });
 
 //follow a user
