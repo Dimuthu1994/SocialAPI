@@ -17,7 +17,6 @@ router.post("/register", async (req, res) => {
   const salt = await bcrypt.genSalt(8);
   user.password = await bcrypt.hash(user.password, salt);
   await user.save();
-
   const token = user.generateAuthToken();
   res
     .header("x-auth-token", token)
@@ -38,6 +37,7 @@ router.patch("/me", auth, async (req, res) => {
     },
     { new: true, runValidators: true }
   );
+
   if (!user) return res.status(404).send("user not found");
   res.send("user updated");
 });

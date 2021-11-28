@@ -60,6 +60,7 @@ router.put("/:id/like", auth, async (req, res) => {
 // get a post
 router.get("/:id", auth, async (req, res) => {
   const post = await Post.findById(req.params.id);
+
   if (!post)
     return res.status(404).send("The post with the given ID is not found");
   res.send(post);
